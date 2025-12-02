@@ -88,6 +88,26 @@ No Terminal do Servidor:
  [Server Principal] multiplica com valores [10.0, 5.0]
  [Server Principal] Resultado obtido do serviço: 50.0
 
+
+Exemplo 2: Soma
+Cliente:
+
+=== MENU ===
+1. Somar
+2. Multiplicar
+Escolha uma opção: 1
+
+--- Digite os números (digite t e confirme para sair)
+Digite o 1º número: 20
+Digite o 2º número: 30.5
+Digite o 3º número: t
+ [Client] Solicitando 'soma' com [20.0, 30.5]...
+ --> Resultado da Soma: 50.5
+
+Servidor Principal:
+
  [Server Principal] Aguardando requisições na fila 'mainServerQueue'...
  [Server Principal] multiplica com valores [10.0, 5.0]
  [Server Principal] Resultado obtido do serviço: 50.0
+ [Server Principal] soma com valores [20.0, 30.5]
+ [Server Principal] Resultado obtido do serviço: 50.5
