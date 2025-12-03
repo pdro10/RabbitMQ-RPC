@@ -20,6 +20,3 @@ if __name__ == "__main__":
     channel.basic_qos(prefetch_count=1)
     channel.basic_consume(queue=queueName, on_message_callback= onMessage)
     channel.start_consuming()
-
-
-

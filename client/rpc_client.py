@@ -12,13 +12,13 @@ class RpcClient:
 
         self.channel.basic_consume(
             queue=self.callback_queue,
-            on_message_callback=self.on_response,
+            on_message_callback=self.onResponse,
             auto_ack=True
         )
         self.response = None
         self.corr_id = None
 
-    def on_response(self, ch, method, props, body):
+    def onResponse(self, ch, method, props, body):
         if self.corr_id == props.correlation_id:
             data = json.loads(body.decode())
             self.response = data.get("resultado")
@@ -49,28 +49,28 @@ class RpcClient:
             
         return self.response
 
-def obter_numeros():
-    lista_numeros = []
-    print("\n--- Digite os números  (digite t e confirme para sair") 
+def obterNumeros():
+    listaNumeros = []
+    print("\n--- Digite os números  (digite t e confirme para sair)") 
     
     contador = 1
     while True:
         entrada = input(f"Digite o {contador}º número: ")
         
-        if entrada.strip() == "t":
-            if len(lista_numeros) == 0:
+        if entrada.strip() == "t" or entrada.strip() == "T":
+            if len(listaNumeros) == 0:
                 print("Você precisa digitar pelo menos um número!")
                 continue
             break
         
         try:
             numero = float(entrada)
-            lista_numeros.append(numero)
+            listaNumeros.append(numero)
             contador += 1
         except ValueError:
             print("Isso não é um número válido. Tente novamente.")
             
-    return lista_numeros
+    return listaNumeros
 
 if __name__ == "__main__":
     client = RpcClient()
@@ -80,21 +80,21 @@ if __name__ == "__main__":
         print("1. Somar")
         print("2. Multiplicar")
         print("s. Sair")
-        opt = input("Escolha uma opção: ")
+        opc = input("Escolha uma opção: ")
         
-        if opt == 's':
+        if opc == 's' or opc == "S":
             print("Saindo...")
             break
         
-        if opt not in ['1', '2']:
+        if opc not in ['1', '2']:
             print("Opção inválida.")
             continue
 
-        valores = obter_numeros()
+        valores = obterNumeros()
         
-        if opt == '1':
+        if opc == '1':
             res = client.call("soma", valores)
             print(f" --> Resultado da Soma: {res}")
-        elif opt == '2':
+        elif opc == '2':
             res = client.call("multiplica", valores)
             print(f" --> Resultado da Multiplicação: {res}")

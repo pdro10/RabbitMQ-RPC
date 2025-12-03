@@ -10,17 +10,17 @@ class InternalClient:
         self.callback_queue = result.method.queue
         self.channel.basic_consume(
             queue=self.callback_queue,
-            on_message_callback=self.on_response,
+            on_message_callback=self.onResponse,
             auto_ack=True
         )
         self.response = None
         self.corr_id = None
 
-    def on_response(self, ch, method, props, body):
+    def onResponse(self, ch, method, props, body):
         if self.corr_id == props.correlation_id:
             self.response = json.loads(body.decode())
 
-    def call_service(self, queue_target, valores):
+    def callService(self, queueTarget, valores):
         self.response = None
         self.corr_id = str(uuid.uuid4())
         
@@ -28,7 +28,7 @@ class InternalClient:
         
         self.channel.basic_publish(
             exchange='',
-            routing_key=queue_target,
+            routing_key=queueTarget,
             properties=pika.BasicProperties(
                 reply_to=self.callback_queue,
                 correlation_id=self.corr_id,
@@ -42,7 +42,7 @@ class InternalClient:
         return self.response.get("resultado")
 
 
-internal_client = InternalClient()
+internalClient = InternalClient()
 
 def onMessage(ch, method, props, body):
     data = json.loads(body.decode())
@@ -52,19 +52,19 @@ def onMessage(ch, method, props, body):
     
     print(f" [Server Principal] {operacao} com valores {valores}")
     
-    resultado_final = 0
+    resultadoFinal = 0
     
     if operacao == 'soma':
 
-        resultado_final = internal_client.call_service('somaQueue', valores)
+        resultadoFinal = internalClient.callService('somaQueue', valores)
     elif operacao == 'multiplica':
-        resultado_final = internal_client.call_service('multiplicaQueue', valores)
+        resultadoFinal = internalClient.callService('multiplicaQueue', valores)
     else:
-        resultado_final = "Erro: Operação desconhecida"
+        resultadoFinal = "Erro: Operação desconhecida"
 
-    print(f" [Server Principal] Resultado obtido do serviço: {resultado_final}")
+    print(f" [Server Principal] Resultado obtido do serviço: {resultadoFinal}")
 
-    sendReply(ch, props, resultado_final)
+    sendReply(ch, props, resultadoFinal)
     ackMessage(ch, method)
 
 if __name__ == "__main__":

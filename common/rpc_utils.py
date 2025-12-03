@@ -3,7 +3,7 @@ import json
 
 def createConnectionAndChannel(host='localhost'):
     connection = pika.BlockingConnection(pika.ConnectionParameters(host))
-
+    
     channel = connection.channel()
 
     return connection, channel
